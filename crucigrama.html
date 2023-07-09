@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crucigrama Interactivo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .crossword {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 1px;
+            background-color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border: 1px solid #999;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .cell:hover {
+            background-color: #eee;
+        }
+
+        .word {
+            font-weight: bold;
+        }
+
+        .reset-button {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .reset-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crucigrama Interactivo</h1>
+    <div class="crossword"></div>
+    <button class="reset-button">Restablecer</button>
+
+    <script>
+        const words = [
+            "HORIZONTAL",
+            "VERTICAL",
+            "CROSSWORD",
+            "INTERACTIVE",
+            "HTML",
+            "CSS",
+            "JAVASCRIPT",
+            "DESIGN",
+            "SIMPLE",
+            "MODERN",
+            "MINIMALIST"
+        ];
+
+        const crosswordContainer = document.querySelector('.crossword');
+        const resetButton = document.querySelector('.reset-button');
+
+        let currentWords = [];
+
+        function generateCrossword() {
+            crosswordContainer.innerHTML = '';
+            currentWords = [];
+
+            const shuffledWords = shuffle(words);
+            const wordCount = Math.floor(Math.random() * 5) + 5;
+
+            for (let i = 0; i < wordCount; i++) {
+                const word = shuffledWords[i];
+                const orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+                const position = getRandomPosition(word, orientation);
+
+                currentWords.push({
+                    word,
+                    orientation,
+                    position
+                });
+
+                for (let j = 0; j < word.length; j++) {
+                    const row = position.row + (orientation === 'horizontal' ? 0 : j);
+                    const col = position.col + (orientation === 'vertical' ? 0 : j);
+                    const cell = createCell(row, col, j === 0);
+
+                    if (j === 0) {
+                        cell.classList.add('word');
+                    }
+
+                    crosswordContainer.appendChild(cell);
+                }
+            }
+        }
+
+        function createCell(row, col, isFirstLetter) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+
+            if (isFirstLetter) {
+                cell.textContent = `${row + 1},${col + 1}`;
+            }
+
+            return cell;
+        }
+
+        function getRandomPosition(word, orientation) {
+            const rows = crosswordContainer.rows;
+            const cols = crosswordContainer.columns;
+
+            let row, col;
+
+            if (orientation === 'horizontal') {
+                row = Math.floor(Math.random() * rows);
+                col = Math.floor(Math.random() * (cols - word.length + 1));
+            } else {
+                row = Math.floor(Math.random() * (rows - word.length + 1));
+                col = Math.floor(Math.random() * cols);
+            }
+
+            return { row, col };
+        }
+
+        function shuffle(array) {
+            const shuffledArray = array.slice();
+
+            for (let i = shuffledArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+            }
+
+            return shuffledArray;
+        }
+
+        resetButton.addEventListener('click', generateCrossword);
+
+        generateCrossword();
+    </script>
+</body>
+</html>
